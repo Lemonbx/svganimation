@@ -1,33 +1,36 @@
 <script setup>
-import svgs from '/src/assets/123.svg?raw'
-import img from '/src/assets/b_94c9fefceb8293e508d07575d869622a.jpg'
-import svg2 from '/src/assets/cover_98698741_p0-01vS6CJ4.svg?raw'
-import img2 from '/src/assets/cover_98698741_p0-FOC34k7N.jpg'
-import svg3 from '/src/assets/7658A8862B07D9DF8141A336786A9DE3.svg?raw'
-import img3 from '/src/assets/7658A8862B07D9DF8141A336786A9DE3.jpg'
+import logoSvg from './assets/kizunaai.svg?raw'
+import logoImg from './assets/kizunaai.svg.png'
 import {nextTick, reactive, ref} from "vue";
 
 const v = reactive([]);
 const showImg = ref(false)
 const imgWidth = ref(0)
 const imgHeight = ref(0)
+const viewWidth = ref(0)
+const viewHeight = ref(0)
 const imgUrl = ref('')
+const bgColor = ref('')
+const lineColor = ref('')
 const data = [
+    // {
+    //     svg: svgs,
+    //     img: img,
+    //     lineTime: 100,
+    //     splitTime: 300
+    // }
     {
-        svg: svgs,
-        img: img,
+        svg: logoSvg,
+        img: logoImg,
         lineTime: 100,
-        splitTime: 300
-    }, {
-        svg: svg2,
-        img: img2,
-        lineTime: 10,
-        splitTime: 30
-    }, {
-        svg: svg3,
-        img: img3,
-        lineTime: 10,
-        splitTime: 10
+        splitTime: 500,
+        viewHeight: 122,
+        viewWidth: 238,
+        imgHeight: 261,
+        imgWidth: 421,
+        random: false,
+        bg: 'white',
+        color: 'black'
     }
 ]
 let lineTime = 10
@@ -35,23 +38,28 @@ let splitTime = 30
 start()
 
 async function start() {
-    for (; ;) {
-        for (const item of data) {
-            lineTime = item.lineTime || 10
-            splitTime = item.splitTime || 30
-            await animation(item.svg, item.img)
-            await sleep(1000)
-        }
+    // for (; ;) {
+    for (const item of data) {
+        lineTime = item.lineTime || 10
+        splitTime = item.splitTime || 30
+        bgColor.value = item.bg || 'black'
+        lineColor.value = item.color || 'white'
+        await animation(item)
+        await sleep(1000)
     }
+    // }
 }
 
-function animation(svgStr, iu) {
+function animation(para) {
+    let {svg: svgStr, img: iu, viewHeight: vh, viewWidth: vw, imgHeight: ih, imgWidth: iw} = para
     return new Promise(async resolve => {
         imgUrl.value = iu
         const [width, height] = await readImgWidthHeight(iu)
         showImg.value = false
-        imgWidth.value = width
-        imgHeight.value = height
+        imgWidth.value = iw || width
+        imgHeight.value = ih || height
+        viewHeight.value = vh || imgHeight.value
+        viewWidth.value = vw || imgWidth.value
         const g = new DOMParser().parseFromString(svgStr, "image/svg+xml").getElementsByTagName("path")
         v.length = 0
         for (let S = 0; S < g.length; S++) {
@@ -68,9 +76,10 @@ function animation(svgStr, iu) {
                 item.length = path.getTotalLength();
                 item.offset = item.length
             })
-            v.sort(() => {
-                return Math.random() - 0.5;
-            })
+            if (para.random ?? true)
+                v.sort(() => {
+                    return Math.random() - 0.5;
+                })
             startAnimation().then(async res => {
                 await sleep(500)
                 showImg.value = true
@@ -97,7 +106,7 @@ function startAnimation() {
                     if (item.offset <= 0) {
                         // item.offset = item.length
                         item.offset = 0
-                        item.color = 'white'
+                        item.color = lineColor.value
                         clearInterval(inter)
                         resolve()
                         if (isLast) {
@@ -138,13 +147,13 @@ function readImgWidthHeight(imgUrl) {
 
 <template>
     <div class="parent" :style="{
-  background:showImg?'unset':'black'
+  background:showImg?'unset':bgColor
 }">
         <div style="position: relative;max-width: 100%;max-height: 100%;" :style="{
   aspectRatio: `${imgWidth}/${imgHeight}`
 }">
             <svg :width="imgWidth" :height="imgHeight" version="1.1"
-                 :viewBox="`0 0 ${imgWidth} ${imgHeight}`"
+                 :viewBox="`0 0 ${viewWidth} ${viewHeight}`"
                  id="svg310"
                  style="width: 100%;height: 100%;display: block"
                  sodipodi:docname="cover_98698741_p0.svg"
