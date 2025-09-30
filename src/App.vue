@@ -1,6 +1,13 @@
 <script setup>
 import logoSvg from './assets/kizunaai.svg?raw'
 import logoImg from './assets/kizunaai.svg.png'
+import svgs from '/src/assets/123.svg?raw'
+import img from '/src/assets/b_94c9fefceb8293e508d07575d869622a.jpg'
+import svg2 from '/src/assets/cover_98698741_p0-01vS6CJ4.svg?raw'
+import img2 from '/src/assets/cover_98698741_p0-FOC34k7N.jpg'
+import svg3 from '/src/assets/7658A8862B07D9DF8141A336786A9DE3.svg?raw'
+import img3 from '/src/assets/7658A8862B07D9DF8141A336786A9DE3.jpg'
+
 import {nextTick, reactive, ref} from "vue";
 
 const v = reactive([]);
@@ -13,12 +20,24 @@ const imgUrl = ref('')
 const bgColor = ref('')
 const lineColor = ref('')
 const data = [
-    // {
-    //     svg: svgs,
-    //     img: img,
-    //     lineTime: 100,
-    //     splitTime: 300
-    // }
+    {
+        svg: svgs,
+        img: img,
+        lineTime: 100,
+        splitTime: 300
+    },
+  {
+    svg: svg2,
+    img: img2,
+    lineTime: 10,
+    splitTime: 50
+  },
+  {
+    svg: svg3,
+    img: img3,
+    lineTime: 10,
+    splitTime: 10
+  },
     {
         svg: logoSvg,
         img: logoImg,
@@ -30,7 +49,7 @@ const data = [
         imgWidth: 421,
         random: false,
         bg: 'white',
-        color: 'black'
+        color: 'pink'
     }
 ]
 let lineTime = 10
@@ -38,7 +57,7 @@ let splitTime = 30
 start()
 
 async function start() {
-    // for (; ;) {
+    for (; ;) {
     for (const item of data) {
         lineTime = item.lineTime || 10
         splitTime = item.splitTime || 30
@@ -47,7 +66,7 @@ async function start() {
         await animation(item)
         await sleep(1000)
     }
-    // }
+    }
 }
 
 function animation(para) {
